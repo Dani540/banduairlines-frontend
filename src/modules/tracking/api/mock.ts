@@ -106,6 +106,9 @@ export const fuenteMock: FuenteTracking = {
     const ruta = `/api/v1/admin/tracking/vuelos/${vueloId}/estado`
     return responder(ruta, ['ADMINISTRADOR'], () => {
       const detalles: DetalleError[] = []
+      if (cuerpo.nuevoEstado && !ESTADOS_VALIDOS.has(cuerpo.nuevoEstado)) {
+        throw crearError(400, 'PETICION_MALFORMADA', 'El cuerpo de la petición no es válido', ruta)
+      }
       if (!cuerpo.nuevoEstado) detalles.push({ campo: 'nuevoEstado', mensaje: 'el nuevo estado es obligatorio' })
       if (cuerpo.motivo && cuerpo.motivo.length > 500) {
         detalles.push({ campo: 'motivo', mensaje: 'el motivo no puede superar los 500 caracteres' })
