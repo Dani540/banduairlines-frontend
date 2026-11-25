@@ -20,7 +20,12 @@ export function resolver(path: string): RutaResuelta | null {
     )
     const m = patron.exec(path)
     if (!m) continue
-    const params = Object.fromEntries(nombres.map((n, i) => [n, decodeURIComponent(m[i + 1])]))
+    let params: Record<string, string>
+    try {
+      params = Object.fromEntries(nombres.map((n, i) => [n, decodeURIComponent(m[i + 1])]))
+    } catch {
+      return null
+    }
     const props = typeof ruta.props === 'function' ? ruta.props({ params }) : ruta.props ? params : {}
     return { ruta, props }
   }

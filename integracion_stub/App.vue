@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, type Component } from 'vue'
+import { MODO_FUENTE } from '../src/modules/tracking/api/fuente'
 import {
   CLAVE_SESION,
   EVENTO_INICIAR_SESION,
+  notificarCambioSesion,
   sesionActual,
   type Sesion,
 } from '../src/modules/tracking/sesion'
@@ -10,7 +12,7 @@ import type { Rol } from '../src/modules/tracking/tipos'
 import Catalogo from './Catalogo.vue'
 import { resolver, usarRutaActual } from './navegacion'
 
-const FUENTE = import.meta.env.VITE_TRACKING_FUENTE === 'http' ? 'http' : 'mock'
+const FUENTE = MODO_FUENTE
 const API_URL = String(import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
 
 const ENLACES = [
@@ -46,6 +48,7 @@ function guardar(nueva: Sesion | null) {
   else sessionStorage.removeItem(CLAVE_SESION)
   sesion.value = nueva
   panelAbierto.value = false
+  notificarCambioSesion()
 }
 
 function elegirRolMock(valor: string) {
@@ -67,7 +70,11 @@ async function iniciarSesionHttp() {
       errorLogin.value = cuerpo?.message ?? `Error ${r.status}`
       return
     }
-    const u = cuerpo.usuario
+    const u = cuerpo?.usuario
+    if (typeof cuerpo?.credencialAcceso !== 'string' || !u?.rol) {
+      errorLogin.value = 'El servidor respondió con un formato inesperado.'
+      return
+    }
     guardar({ token: cuerpo.credencialAcceso, rol: u.rol, nombre: `${u.nombres} ${u.apellidos}` })
     contrasena.value = ''
   } catch {
@@ -77,7 +84,11 @@ async function iniciarSesionHttp() {
   }
 }
 
-const abrirPanel = () => (panelAbierto.value = true)
+// Si la vista pide iniciar sesión teniendo una, el token ya no sirve (expiró o es inválido).
+function abrirPanel() {
+  if (FUENTE === 'http' && sesion.value) guardar(null)
+  panelAbierto.value = true
+}
 onMounted(() => window.addEventListener(EVENTO_INICIAR_SESION, abrirPanel))
 onBeforeUnmount(() => window.removeEventListener(EVENTO_INICIAR_SESION, abrirPanel))
 </script>
@@ -109,8 +120,15 @@ onBeforeUnmount(() => window.removeEventListener(EVENTO_INICIAR_SESION, abrirPan
   </header>
 
   <form v-if="panelAbierto && FUENTE === 'http' && !sesion" class="stub-login" @submit.prevent="iniciarSesionHttp">
-    <input v-model="correo" type="email" placeholder="correo" required autocomplete="username" />
-    <input v-model="contrasena" type="password" placeholder="contraseña" required autocomplete="current-password" />
+    <input v-model="correo" type="email" placeholder="correo" aria-label="Correo" required autocomplete="username" />
+    <input
+      v-model="contrasena"
+      type="password"
+      placeholder="contraseña"
+      aria-label="Contraseña"
+      required
+      autocomplete="current-password"
+    />
     <button type="submit" :disabled="enviando">Entrar</button>
     <span v-if="errorLogin" class="stub-error">{{ errorLogin }}</span>
   </form>
@@ -126,7 +144,7 @@ onBeforeUnmount(() => window.removeEventListener(EVENTO_INICIAR_SESION, abrirPan
       Esta ruta requiere el rol {{ resuelta.ruta.meta.rol }}. El router de Integración la bloquearía; el stub la
       muestra igual para probar la vista.
     </p>
-    <component :is="vistaActual" v-if="vistaActual" :key="`${path}|${sesion?.rol ?? ''}`" v-bind="resuelta?.props" />
+    <component :is="vistaActual" v-if="vistaActual" :key="path" v-bind="resuelta?.props" />
   </div>
 </template>
 

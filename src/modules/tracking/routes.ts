@@ -13,6 +13,10 @@ export interface RutaTracking {
 const VistaSeguimiento = () => import('./vistas/VistaSeguimiento.vue')
 const VistaOperaciones = () => import('./vistas/VistaOperaciones.vue')
 
+function aVueloId(valor: string | string[] | undefined): number | undefined {
+  return typeof valor === 'string' && /^\d{1,15}$/.test(valor) ? Number(valor) : undefined
+}
+
 export const routes: RutaTracking[] = [
   {
     path: '/tracking',
@@ -24,7 +28,7 @@ export const routes: RutaTracking[] = [
     path: '/tracking/vuelos/:vueloId',
     name: 'tracking-vuelo',
     component: VistaSeguimiento,
-    props: (ruta) => ({ vueloId: Number(ruta.params.vueloId) }),
+    props: (ruta) => ({ vueloId: aVueloId(ruta.params.vueloId) }),
     meta: { titulo: 'Seguimiento de vuelos' },
   },
   {

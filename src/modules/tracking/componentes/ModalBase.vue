@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref, useId, watch } from 'vue'
+import { onMounted, ref, useId, watch } from 'vue'
 
 const props = defineProps<{ abierto: boolean; titulo: string }>()
 const emit = defineEmits<{ cerrar: [] }>()
@@ -15,14 +15,22 @@ function sincronizar(abierto: boolean) {
   if (!abierto && d.open) d.close()
 }
 
-watch(
-  () => props.abierto,
-  (abierto) => nextTick(() => sincronizar(abierto)),
-)
+watch(() => props.abierto, sincronizar, { flush: 'post' })
 onMounted(() => sincronizar(props.abierto))
 
+// Chromium puede cerrar el diálogo con un segundo Esc aunque se prevenga `cancel`.
+function alCerrarNativo() {
+  if (props.abierto) emit('cerrar')
+}
+
+// Solo cierra si el clic empezó y terminó en el fondo, no al soltar un arrastre desde el contenido.
+let pulsoEnFondo = false
+function alPresionar(evento: PointerEvent) {
+  pulsoEnFondo = evento.target === dialogo.value
+}
 function alHacerClic(evento: MouseEvent) {
-  if (evento.target === dialogo.value) emit('cerrar')
+  if (pulsoEnFondo && evento.target === dialogo.value) emit('cerrar')
+  pulsoEnFondo = false
 }
 </script>
 
@@ -32,6 +40,8 @@ function alHacerClic(evento: MouseEvent) {
     class="modal"
     :aria-labelledby="idTitulo"
     @cancel.prevent="emit('cerrar')"
+    @close="alCerrarNativo"
+    @pointerdown="alPresionar"
     @click="alHacerClic"
   >
     <div class="modal__contenido">

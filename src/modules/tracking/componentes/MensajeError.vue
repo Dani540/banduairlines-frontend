@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { solicitarInicioSesion } from '../sesion'
+import { obtenerToken, solicitarInicioSesion } from '../sesion'
 import type { ApiError } from '../tipos'
 
 const props = defineProps<{ error: ApiError | null; textoSinSesion?: string }>()
@@ -12,6 +12,7 @@ const texto = computed(() => {
     case 0:
       return 'No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.'
     case 401:
+      if (obtenerToken()) return 'Tu sesión expiró. Vuelve a iniciar sesión.'
       // La especificación declara pública la consulta (CU-01, CU-02), pero el backend exige sesión.
       return (
         props.textoSinSesion ??
@@ -21,8 +22,9 @@ const texto = computed(() => {
       return 'Tu cuenta no tiene permiso para ver esta información.'
     case 400:
     case 404:
+    case 409:
     case 422:
-      return e.message
+      return e.message || 'La operación no se pudo completar.'
     default:
       return 'Ocurrió un error inesperado. Inténtalo más tarde.'
   }
@@ -33,7 +35,7 @@ const texto = computed(() => {
   <div v-if="error" class="mensaje-error" role="alert">
     <p class="mensaje-error__texto">{{ texto }}</p>
     <ul v-if="error.details.length" class="mensaje-error__detalles">
-      <li v-for="d in error.details" :key="d.campo">{{ d.mensaje }}</li>
+      <li v-for="(d, i) in error.details" :key="`${d.campo}-${i}`">{{ d.mensaje }}</li>
     </ul>
     <button v-if="error.status === 401" type="button" class="mensaje-error__accion" @click="solicitarInicioSesion">
       Iniciar sesión

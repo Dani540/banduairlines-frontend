@@ -1,31 +1,33 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { crearError } from '../api/errores'
-import { fuente } from '../api/fuente'
+import { asegurarAeropuertos, fuente } from '../api/fuente'
 import InspectorVuelo from '../componentes/InspectorVuelo.vue'
 import MensajeError from '../componentes/MensajeError.vue'
 import ModalBase from '../componentes/ModalBase.vue'
 import ModalCambioEstado from '../componentes/ModalCambioEstado.vue'
 import ResumenOperaciones from '../componentes/ResumenOperaciones.vue'
 import TablaOperaciones from '../componentes/TablaOperaciones.vue'
-import { registrarAeropuertos } from '../dominio/aeropuertos'
 import { hoyChile } from '../dominio/tiempo'
-import { rolActual } from '../sesion'
+import { usarSesion } from '../sesion'
 import type { ApiError, EstadoVuelo, ResumenVuelo } from '../tipos'
 
 const SIN_SESION = 'Inicia sesión con una cuenta de administrador para ver las operaciones del día.'
-const rol = rolActual()
-const errorAcceso =
-  rol === 'ADMINISTRADOR'
-    ? null
-    : rol
-      ? crearError(403, 'ACCESO_DENEGADO', 'No tienes permisos para esta acción', '/admin/tracking')
-      : crearError(401, 'NO_AUTENTICADO', 'Autenticación requerida', '/admin/tracking')
+const sesion = usarSesion()
+const errorAcceso = computed(() => {
+  const rol = sesion.value?.rol
+  if (rol === 'ADMINISTRADOR') return null
+  return rol
+    ? crearError(403, 'ACCESO_DENEGADO', 'No tienes permisos para esta acción', '/admin/tracking')
+    : crearError(401, 'NO_AUTENTICADO', 'Autenticación requerida', '/admin/tracking')
+})
 
 const listo = ref(false)
+const sinAeropuertos = ref(false)
 const fecha = ref(hoyChile())
 const estado = ref<EstadoVuelo | null>(null)
 const vuelosDia = ref<ResumenVuelo[]>([])
+const fechaDia = ref<string | null>(null)
 const vuelosFiltrados = ref<ResumenVuelo[]>([])
 const cargando = ref(false)
 const error = ref<ApiError | null>(null)
@@ -38,16 +40,28 @@ const codigoHistorial = computed(
 )
 
 // El resumen muestra el día completo; la tabla, lo que devuelve el backend con el filtro de estado.
-async function cargar() {
+let consulta = 0
+async function cargar(refrescarDia = true) {
+  const id = ++consulta
+  const f = fecha.value
+  const e = estado.value
+  const pedirDia = refrescarDia || fechaDia.value !== f
   cargando.value = true
+  vuelosFiltrados.value = []
   try {
-    vuelosDia.value = await fuente.tablero({ fecha: fecha.value })
-    vuelosFiltrados.value = estado.value ? await fuente.tablero({ fecha: fecha.value, estado: estado.value }) : []
+    const [dia, filtrados] = await Promise.all([
+      pedirDia ? fuente.tablero({ fecha: f }) : vuelosDia.value,
+      e ? fuente.tablero({ fecha: f, estado: e }) : [],
+    ])
+    if (id !== consulta) return
+    vuelosDia.value = dia
+    fechaDia.value = f
+    vuelosFiltrados.value = filtrados
     error.value = null
-  } catch (e) {
-    error.value = e as ApiError
+  } catch (err) {
+    if (id === consulta) error.value = err as ApiError
   } finally {
-    cargando.value = false
+    if (id === consulta) cargando.value = false
   }
 }
 
@@ -56,28 +70,38 @@ function alActualizar() {
   void cargar()
 }
 
-watch([fecha, estado], () => void cargar())
+watch(fecha, () => void cargar())
+watch(estado, () => void cargar(false))
 
-onMounted(async () => {
-  if (errorAcceso) return
-  await fuente.aeropuertos().then(registrarAeropuertos, () => undefined)
-  listo.value = true
-  await cargar()
-})
+watch(
+  () => errorAcceso.value === null,
+  (esAdmin) => {
+    if (!esAdmin) return
+    if (listo.value) return void cargar()
+    void Promise.all([asegurarAeropuertos().catch(() => (sinAeropuertos.value = true)), cargar()]).then(
+      () => (listo.value = true),
+    )
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
   <MensajeError v-if="errorAcceso" :error="errorAcceso" :texto-sin-sesion="SIN_SESION" />
-  <div v-else-if="listo" class="operaciones">
+  <p v-else-if="!listo" class="operaciones__aviso">Cargando…</p>
+  <div v-else class="operaciones">
     <h1>Actualización operacional</h1>
     <MensajeError :error="error" :texto-sin-sesion="SIN_SESION" />
+    <p v-if="sinAeropuertos" class="operaciones__aviso">
+      No se pudieron cargar los aeropuertos: las horas se muestran en hora de Chile.
+    </p>
     <ResumenOperaciones :vuelos="vuelosDia" @filtrar="estado = $event" />
     <TablaOperaciones
       v-model:fecha="fecha"
       v-model:estado="estado"
       :vuelos="vuelosTabla"
       :cargando="cargando"
-      @refrescar="cargar"
+      @refrescar="cargar()"
       @actualizar="vueloCambio = $event"
       @ver-historial="vueloHistorial = $event"
     />
@@ -95,5 +119,9 @@ onMounted(async () => {
 }
 .operaciones h1 {
   margin: 0;
+}
+.operaciones__aviso {
+  margin: 0;
+  color: #64748b;
 }
 </style>

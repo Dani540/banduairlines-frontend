@@ -7,11 +7,15 @@ import type { ApiError, SeguimientoVuelo } from '../tipos'
 const emit = defineEmits<{ encontrado: [seg: SeguimientoVuelo]; error: [e: ApiError] }>()
 const codigo = ref('')
 
+let consulta = 0
 function buscar() {
+  const texto = codigo.value.trim()
+  if (!texto) return
+  const id = ++consulta
   fuente
-    .obtenerPorCodigo(codigo.value)
-    .then((seg) => emit('encontrado', seg))
-    .catch((e: ApiError) => emit('error', e))
+    .obtenerPorCodigo(texto)
+    .then((seg) => id === consulta && emit('encontrado', seg))
+    .catch((e: ApiError) => id === consulta && emit('error', e))
 }
 </script>
 

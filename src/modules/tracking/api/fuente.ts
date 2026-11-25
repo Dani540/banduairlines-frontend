@@ -1,3 +1,4 @@
+import { registrarAeropuertos } from '../dominio/aeropuertos'
 import type {
   ActualizarEstado,
   Aeropuerto,
@@ -18,4 +19,20 @@ export interface FuenteTracking {
   aeropuertos(): Promise<Aeropuerto[]>
 }
 
-export const fuente: FuenteTracking = import.meta.env.VITE_TRACKING_FUENTE === 'mock' ? fuenteMock : fuenteHttp
+export const MODO_FUENTE: 'mock' | 'http' = import.meta.env.VITE_TRACKING_FUENTE === 'mock' ? 'mock' : 'http'
+
+export const fuente: FuenteTracking = MODO_FUENTE === 'mock' ? fuenteMock : fuenteHttp
+
+let cargaAeropuertos: Promise<void> | null = null
+
+/** Carga el registro de aeropuertos una sola vez; si falla, el siguiente llamado reintenta. */
+export function asegurarAeropuertos(): Promise<void> {
+  cargaAeropuertos ??= fuente
+    .aeropuertos()
+    .then(registrarAeropuertos)
+    .catch((e: unknown) => {
+      cargaAeropuertos = null
+      throw e
+    })
+  return cargaAeropuertos
+}
