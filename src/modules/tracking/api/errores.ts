@@ -11,5 +11,7 @@ export function crearError(
 }
 
 export function esApiError(valor: unknown): valor is ApiError {
-  return typeof valor === 'object' && valor !== null && 'status' in valor && 'code' in valor
+  if (typeof valor !== 'object' || valor === null) return false
+  const v = valor as Record<string, unknown>
+  return typeof v.status === 'number' && typeof v.code === 'string' && typeof v.message === 'string'
 }
