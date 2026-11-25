@@ -15,7 +15,7 @@ const API_URL = String(import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
 
 const ENLACES = [
   { href: '#/tracking', texto: 'Seguimiento' },
-  { href: '#/tracking/vuelos/101', texto: 'Vuelo 101' },
+  ...(FUENTE === 'mock' ? [{ href: '#/tracking/vuelos/101', texto: 'Vuelo 101' }] : []),
   { href: '#/admin/tracking', texto: 'Operaciones (admin)' },
   { href: '#/catalogo', texto: 'Catálogo' },
 ]
