@@ -31,8 +31,8 @@ export function razonNoPermitido(actual: EstadoVuelo, destino: EstadoVuelo): str
   if (esTerminal(actual)) return `El vuelo está ${ETIQUETA_ESTADO[actual].toLowerCase()}: ya no cambia de estado.`
   if (SOLO_SISTEMA.includes(destino)) return `${ETIQUETA_ESTADO[destino]} lo marca el sistema según el horario.`
   if (actual === 'DESPEGADO' || actual === 'EN_VUELO') return 'El vuelo ya despegó: avanza solo según el horario.'
+  if (destino === actual) return `El vuelo ya está ${ETIQUETA_ESTADO[actual].toLowerCase()}.`
   if (destino === 'PROGRAMADO') return 'Un vuelo no vuelve a Programado: una reprogramación es un retraso.'
   if (destino === 'DESPEGADO') return 'Para despegar, el vuelo debe estar embarcando.'
-  if (destino === actual) return `El vuelo ya está ${ETIQUETA_ESTADO[actual].toLowerCase()}.`
   return `No se permite pasar de ${ETIQUETA_ESTADO[actual]} a ${ETIQUETA_ESTADO[destino]}.`
 }
