@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { EventoEstado } from '../tipos'
 
-// PENDIENTE (José, RF-03): historial de estados según la guía §5.5.
+// PENDIENTE (José, RF-03): historial de estados.
 defineProps<{ historial: EventoEstado[] }>()
 </script>
 

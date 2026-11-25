@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { EstadoVuelo, ResumenVuelo } from '../tipos'
 
-// PENDIENTE (Alonso, RF-07): tabla, filtros, paginación y CSV según la guía §5.5.
+// PENDIENTE (Alonso, RF-07): tabla, filtros, paginación y CSV.
 defineProps<{ vuelos: ResumenVuelo[]; fecha: string; estado: EstadoVuelo | null; cargando: boolean }>()
 const emit = defineEmits<{
   'update:fecha': [fecha: string]

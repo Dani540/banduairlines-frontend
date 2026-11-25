@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { fuente } from '../api/fuente'
 import type { ApiError, SeguimientoVuelo } from '../tipos'
 
-// PENDIENTE (José, RF-01): reemplazar este cableado mínimo por el componente de la guía §5.5.
+// PENDIENTE (José, RF-01): reemplazar este cableado mínimo.
 const emit = defineEmits<{ encontrado: [seg: SeguimientoVuelo]; error: [e: ApiError] }>()
 const codigo = ref('')
 

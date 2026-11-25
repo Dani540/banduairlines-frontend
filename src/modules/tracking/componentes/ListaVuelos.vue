@@ -2,7 +2,7 @@
 import type { ResumenVuelo } from '../tipos'
 import TarjetaVuelo from './TarjetaVuelo.vue'
 
-// PENDIENTE (Alonso, RF-04): lista con filtros y orden según la guía §5.5.
+// PENDIENTE (Alonso, RF-04): lista con filtros y orden.
 defineProps<{ vuelos: ResumenVuelo[]; seleccionado: number | null }>()
 const emit = defineEmits<{ seleccionar: [vueloId: number] }>()
 </script>

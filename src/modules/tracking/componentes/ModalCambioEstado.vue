@@ -2,7 +2,7 @@
 import type { SeguimientoVuelo } from '../tipos'
 import ModalBase from './ModalBase.vue'
 
-// PENDIENTE (Javier, RF-08 / RF-02): formulario de cambio manual según la guía §5.5.
+// PENDIENTE (Javier, RF-08 / RF-02): formulario de cambio manual.
 defineProps<{ vueloId: number | null }>()
 const emit = defineEmits<{ cerrar: []; actualizado: [seg: SeguimientoVuelo] }>()
 </script>

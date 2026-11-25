@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { EstadoVuelo, ResumenVuelo } from '../tipos'
 
-// PENDIENTE (Javier, RF-07): cuatro indicadores del día según la guía §5.5.
+// PENDIENTE (Javier, RF-07): cuatro indicadores del día.
 defineProps<{ vuelos: ResumenVuelo[] }>()
 const emit = defineEmits<{ filtrar: [estado: EstadoVuelo | null] }>()
 </script>

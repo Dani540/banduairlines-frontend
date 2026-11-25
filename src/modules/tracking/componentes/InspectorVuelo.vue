@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SeguimientoVuelo } from '../tipos'
 
-// PENDIENTE (José, RF-01): detalle del vuelo según la guía §5.5.
+// PENDIENTE (José, RF-01): detalle del vuelo.
 defineProps<{ vueloId: number | null; seguimiento?: SeguimientoVuelo }>()
 </script>
 

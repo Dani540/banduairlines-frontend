@@ -12,7 +12,7 @@ const texto = computed(() => {
     case 0:
       return 'No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.'
     case 401:
-      // P15: la consulta sin cuenta está en la especificación, pero el backend entregado exige sesión.
+      // La especificación declara pública la consulta (CU-01, CU-02), pero el backend exige sesión.
       return (
         props.textoSinSesion ??
         'La consulta sin cuenta todavía no está habilitada en el servidor. Inicia sesión para ver el estado de tu vuelo.'
