@@ -1,0 +1,8 @@
+{
+  "extends": "../tsconfig.app.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "../node_modules/.tmp/tsconfig.integracion_stub.tsbuildinfo"
+  },
+  "include": ["./*.ts", "./*.vue", "../src/modules/tracking/**/*.ts", "../src/modules/tracking/**/*.vue"],
+  "exclude": ["./vite.config.ts"]
+}
