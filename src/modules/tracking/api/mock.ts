@@ -40,7 +40,7 @@ function responder<T>(ruta: string, roles: Rol[] | null, calcular: () => T): Pro
       try {
         if (roles) {
           const rol = rolActual()
-          if (!rol) throw crearError(401, 'NO_AUTENTICADO', 'Autenticación requerida', ruta)
+          if (!rol) throw crearError(401, 'NO_AUTENTICADO', 'Autenticación requerida o token inválido', ruta)
           if (!roles.includes(rol)) throw crearError(403, 'ACCESO_DENEGADO', 'No tienes permisos para esta acción', ruta)
         }
         resolver(structuredClone(calcular()))

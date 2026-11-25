@@ -19,7 +19,7 @@ const errorAcceso = computed(() => {
   if (rol === 'ADMINISTRADOR') return null
   return rol
     ? crearError(403, 'ACCESO_DENEGADO', 'No tienes permisos para esta acción', '/admin/tracking')
-    : crearError(401, 'NO_AUTENTICADO', 'Autenticación requerida', '/admin/tracking')
+    : crearError(401, 'NO_AUTENTICADO', 'Autenticación requerida o token inválido', '/admin/tracking')
 })
 
 const listo = ref(false)
