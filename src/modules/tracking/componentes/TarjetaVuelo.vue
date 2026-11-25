@@ -6,5 +6,5 @@ defineProps<{ vuelo: ResumenVuelo; activo: boolean }>()
 </script>
 
 <template>
-  <span>{{ vuelo.codigoVuelo }} · {{ vuelo.estadoActual }}{{ activo ? ' ◀' : '' }}</span>
+  <span>{{ vuelo.codigoVuelo }} ({{ vuelo.estadoActual }}){{ activo ? ' ◀' : '' }}</span>
 </template>

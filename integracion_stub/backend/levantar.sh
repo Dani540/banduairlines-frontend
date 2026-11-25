@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Levanta el backend del ramo con seguridad real y vuelos de demostración, sin modificarlo.
+# Levanta el backend con seguridad activa y vuelos de demostración, sin modificarlo.
 # Uso: integracion_stub/backend/levantar.sh [ruta-al-backend]   (por defecto ../banduairlines-backend)
 set -euo pipefail
 cd "$(dirname "$0")"

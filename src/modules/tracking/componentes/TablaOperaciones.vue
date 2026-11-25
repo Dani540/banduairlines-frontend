@@ -14,12 +14,12 @@ const emit = defineEmits<{
 
 <template>
   <section class="pendiente">
-    <strong>TablaOperaciones</strong> · pendiente (Alonso, RF-07) · {{ fecha }} · estado: {{ estado ?? 'todos' }}
-    · {{ cargando ? 'cargando…' : `${vuelos.length} vuelos` }}
+    <strong>TablaOperaciones</strong>: pendiente (Alonso, RF-07), {{ fecha }}, estado: {{ estado ?? 'todos' }},
+    {{ cargando ? 'cargando…' : `${vuelos.length} vuelos` }}
     <button type="button" @click="emit('refrescar')">Refrescar</button>
     <ul>
       <li v-for="v in vuelos" :key="v.vueloId">
-        {{ v.codigoVuelo }} · {{ v.estadoActual }}
+        {{ v.codigoVuelo }} ({{ v.estadoActual }})
         <button type="button" @click="emit('actualizar', v.vueloId)">Actualizar</button>
         <button type="button" @click="emit('verHistorial', v.vueloId)">Ver historial</button>
       </li>

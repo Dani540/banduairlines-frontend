@@ -7,7 +7,7 @@ defineProps<{ historial: EventoEstado[] }>()
 
 <template>
   <section class="pendiente">
-    <strong>LineaTiempo</strong> · pendiente (José, RF-03) · {{ historial.length }} eventos
+    <strong>LineaTiempo</strong>: pendiente (José, RF-03), {{ historial.length }} eventos
   </section>
 </template>
 

@@ -96,7 +96,7 @@ onBeforeUnmount(() => window.removeEventListener(EVENTO_INICIAR_SESION, abrirPan
 <template>
   <header class="stub-barra">
     <strong>BanduAirlines</strong>
-    <span class="stub-etiqueta">stub de Integración · fuente {{ FUENTE }}</span>
+    <span class="stub-etiqueta">stub de Integración, fuente {{ FUENTE }}</span>
     <nav>
       <a v-for="e in ENLACES" :key="e.href" :href="e.href" :class="{ activo: `#${path}` === e.href }">{{ e.texto }}</a>
     </nav>

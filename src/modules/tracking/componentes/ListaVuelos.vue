@@ -9,7 +9,7 @@ const emit = defineEmits<{ seleccionar: [vueloId: number] }>()
 
 <template>
   <section class="pendiente">
-    <strong>ListaVuelos</strong> · pendiente (Alonso, RF-04) · {{ vuelos.length }} vuelos
+    <strong>ListaVuelos</strong>: pendiente (Alonso, RF-04), {{ vuelos.length }} vuelos
     <ul>
       <li v-for="v in vuelos" :key="v.vueloId">
         <button type="button" @click="emit('seleccionar', v.vueloId)">

@@ -7,8 +7,8 @@ defineProps<{ vueloId: number | null; seguimiento?: SeguimientoVuelo }>()
 
 <template>
   <section class="pendiente">
-    <strong>InspectorVuelo</strong> · pendiente (José, RF-01)
-    <p>vueloId: {{ vueloId ?? '—' }} · seguimiento recibido: {{ seguimiento ? seguimiento.codigoVuelo : 'no (lo pide con obtenerPorId)' }}</p>
+    <strong>InspectorVuelo</strong>: pendiente (José, RF-01)
+    <p>vueloId: {{ vueloId ?? 'ninguno' }}, seguimiento recibido: {{ seguimiento ? seguimiento.codigoVuelo : 'no (lo pide con obtenerPorId)' }}</p>
   </section>
 </template>
 

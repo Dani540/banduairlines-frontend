@@ -9,7 +9,7 @@ const emit = defineEmits<{ cerrar: []; actualizado: [seg: SeguimientoVuelo] }>()
 
 <template>
   <ModalBase :abierto="vueloId !== null" titulo="Actualizar estado" @cerrar="emit('cerrar')">
-    <p class="pendiente"><strong>ModalCambioEstado</strong> · pendiente (Javier, RF-08) · vuelo {{ vueloId }}</p>
+    <p class="pendiente"><strong>ModalCambioEstado</strong>: pendiente (Javier, RF-08), vuelo {{ vueloId }}</p>
   </ModalBase>
 </template>
 

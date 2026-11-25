@@ -21,7 +21,7 @@ function buscar() {
 
 <template>
   <form class="pendiente" @submit.prevent="buscar">
-    <strong>BuscadorVuelo</strong> · pendiente (José, RF-01)
+    <strong>BuscadorVuelo</strong>: pendiente (José, RF-01)
     <input v-model="codigo" placeholder="CL-1291" aria-label="Código de vuelo" />
     <button type="submit">Buscar</button>
   </form>

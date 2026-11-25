@@ -8,7 +8,7 @@ const emit = defineEmits<{ filtrar: [estado: EstadoVuelo | null] }>()
 
 <template>
   <section class="pendiente">
-    <strong>ResumenOperaciones</strong> · pendiente (Javier, RF-07) · {{ vuelos.length }} vuelos del día
+    <strong>ResumenOperaciones</strong>: pendiente (Javier, RF-07), {{ vuelos.length }} vuelos del día
     <button type="button" @click="emit('filtrar', null)">Ver todos</button>
   </section>
 </template>
