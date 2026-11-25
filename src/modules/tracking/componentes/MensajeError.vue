@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { solicitarInicioSesion } from '../sesion'
 import type { ApiError } from '../tipos'
 
-const props = defineProps<{ error: ApiError | null }>()
+const props = defineProps<{ error: ApiError | null; textoSinSesion?: string }>()
 
 const texto = computed(() => {
   const e = props.error
@@ -13,7 +13,10 @@ const texto = computed(() => {
       return 'No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.'
     case 401:
       // P15: la consulta sin cuenta está en la especificación, pero el backend entregado exige sesión.
-      return 'La consulta sin cuenta todavía no está habilitada en el servidor. Inicia sesión para ver el estado de tu vuelo.'
+      return (
+        props.textoSinSesion ??
+        'La consulta sin cuenta todavía no está habilitada en el servidor. Inicia sesión para ver el estado de tu vuelo.'
+      )
     case 403:
       return 'Tu cuenta no tiene permiso para ver esta información.'
     case 400:

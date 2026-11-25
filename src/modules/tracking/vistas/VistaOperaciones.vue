@@ -13,6 +13,7 @@ import { hoyChile } from '../dominio/tiempo'
 import { rolActual } from '../sesion'
 import type { ApiError, EstadoVuelo, ResumenVuelo } from '../tipos'
 
+const SIN_SESION = 'Inicia sesión con una cuenta de administrador para ver las operaciones del día.'
 const rol = rolActual()
 const errorAcceso =
   rol === 'ADMINISTRADOR'
@@ -66,10 +67,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <MensajeError v-if="errorAcceso" :error="errorAcceso" />
+  <MensajeError v-if="errorAcceso" :error="errorAcceso" :texto-sin-sesion="SIN_SESION" />
   <div v-else-if="listo" class="operaciones">
     <h1>Actualización operacional</h1>
-    <MensajeError :error="error" />
+    <MensajeError :error="error" :texto-sin-sesion="SIN_SESION" />
     <ResumenOperaciones :vuelos="vuelosDia" @filtrar="estado = $event" />
     <TablaOperaciones
       v-model:fecha="fecha"
